@@ -23,12 +23,13 @@ class OrderListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
+        tableView.separatorStyle = .none
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         refreshControl?.tintColor = .black
         
-        NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
         displayLocalOrders()
+        NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
         viewModel.getOrders(onError: {
             print("error retreiving data")
         })
@@ -36,37 +37,45 @@ class OrderListViewController: UITableViewController {
     
     @objc func refreshTableView() {
         viewModel.getOrders(onError: { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                self?.refreshControl?.endRefreshing()
-            }
+            self?.refreshControl?.endRefreshing()
         })
     }
     
     @objc private func displayLocalOrders() {
-        viewModel.loadOrders()
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-            self.refreshControl?.endRefreshing()
+        viewModel.loadOrders {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.refreshControl?.endRefreshing()
+            }
         }
     }
 }
 
 extension OrderListViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.toOrderDetailsViewController(indexPath: indexPath)
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: OrderTableViewCell.className, for: indexPath) as? OrderTableViewCell else { return UITableViewCell() }
-        cell.configure(order: viewModel.orders[indexPath.row])
+        if indexPath.section == 0 {
+            cell.configure(order: viewModel.unsentOrders[indexPath.row])
+        } else {
+            cell.configure(order: viewModel.sentOrders[indexPath.row])
+        }
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.orders.count
+        return section == 0 ? viewModel.unsentOrders.count : viewModel.sentOrders.count
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return viewModel.sentOrders.isEmpty ? 1 : 2
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard indexPath.section == 0 else { return nil }
         return UISwipeActionsConfiguration(actions: [
             makeTrailingContextualAction(forRowAt: indexPath)
         ])
@@ -74,11 +83,16 @@ extension OrderListViewController {
     
     //MARK: - Contextual Actions
     private func makeTrailingContextualAction(forRowAt indexPath: IndexPath) -> UIContextualAction {
-        return UIContextualAction(style: .normal, title: "Delivered", handler: { action, swipeButton, completion in
-            self.viewModel.deliverOrder(at: indexPath, completion: {
+        let action = UIContextualAction(style: .normal, title: "Deliver", handler: { [weak self] action, swipeButton, completion in
+            self?.viewModel.deliverOrder(at: indexPath, completion: {
                 completion(true)
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()                    
+                }
             })
-            print(self.viewModel.orders[indexPath.row])
+            print(self?.viewModel.orders[indexPath.row])
         })
+        action.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
+        return action
     }
 }

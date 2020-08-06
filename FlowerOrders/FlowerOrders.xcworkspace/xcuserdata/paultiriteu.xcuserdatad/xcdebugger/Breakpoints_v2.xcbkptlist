@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "EA44448F-C9B9-4AFC-B6AA-5EC8A4B2F88F"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B6AE1476-A1DD-4F65-AF5D-3AA79EAEF5F6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlowerOrders/OrdersList/OrderListRepository.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "getOrders(onError:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AC7C0D8E-CDE8-4299-96B0-13170534616A"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlowerOrders/OrdersList/OrderListRepository.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "getOrders(onError:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DCF58DF5-04D0-43D1-B507-7949D8E1C1F9"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlowerOrders/OrdersList/OrderModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "mapToCoreData(context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8C69B31-2CC5-42E4-A60F-EA44B84F3ADE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FlowerOrders/OrdersList/OrderListViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
+            landmarkName = "loadOrders(completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A8C69B31-2CC5-42E4-A60F-EA44B84F3ADE - 99ecbf6b031bb0dc"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.NSManagedObjectContext) -&gt; () in FlowerOrders.OrderListViewModel.loadOrders(completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "FlowerOrders"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/paultiriteu/FlowerOrders/FlowerOrders/FlowerOrders/OrdersList/OrderListViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "1448">
+               </Location>
+               <Location
+                  uuid = "A8C69B31-2CC5-42E4-A60F-EA44B84F3ADE - b1a468ca641fe120"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (FlowerOrders.CD_Order) -&gt; Swift.Bool in closure #1 (__C.NSManagedObjectContext) -&gt; () in FlowerOrders.OrderListViewModel.loadOrders(completion: () -&gt; ()) -&gt; ()"
+                  moduleName = "FlowerOrders"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/paultiriteu/FlowerOrders/FlowerOrders/FlowerOrders/OrdersList/OrderListViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

@@ -14,12 +14,18 @@ class Router {
     
     func getInitialViewController() -> UIViewController {
         let repository = OrderListRepository(networking: networking)
-        let viewModel = OrderListViewModel(repository: repository)
+        let viewModel = OrderListViewModel(repository: repository, router: self)
         let viewController = OrderListViewController(viewModel: viewModel)
         
         let navigationController = UINavigationController(rootViewController: viewController)
         navController = navigationController
         
         return navigationController
+    }
+    
+    func toOrderDetailsViewController(order: CD_Order) {
+        let viewModel = OrderDetailsViewModel(order: order)
+        let viewController = OrderDetailsViewController(viewModel: viewModel)
+        navController?.pushViewController(viewController, animated: true)
     }
 }

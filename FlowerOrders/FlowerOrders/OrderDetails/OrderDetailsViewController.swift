@@ -9,9 +9,48 @@
 import UIKit
 
 class OrderDetailsViewController: UIViewController {
+    @IBOutlet weak var idLabel: UILabel!
+    @IBOutlet weak var deliverButton: UIButton!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var priceLabel: UILabel!
+    
+    private let viewModel: OrderDetailsViewModel
+    
+    init(viewModel: OrderDetailsViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: OrderDetailsViewController.className, bundle: Bundle(for: OrderDetailsViewController.self))
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureUI()
+    }
+    
+    private func configureUI() {
+        let order = viewModel.order
+        if let orderId = Int(exactly: order.uid) {
+            title = "Order ID: \(orderId)"
+        } else {
+            title = "Order details"
+        }
+        
+        if viewModel.order.sent == false {
+            deliverButton.setTitle("Set as delivered", for: .normal)
+            deliverButton.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
+            deliverButton.isEnabled = true
+        } else {
+            deliverButton.setTitle("Order delivered", for: .normal)
+            deliverButton.backgroundColor = .lightGray
+            deliverButton.isEnabled = false
+        }
+        
+        nameLabel.text = "Recipient's name is \(order.recipient)"
+        descriptionLabel.text = order.orderDescription
+        priceLabel.text = "$\(order.price)"
     }
 }
