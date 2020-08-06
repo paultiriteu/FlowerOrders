@@ -48,22 +48,6 @@ class OrderListViewModel {
                     self?.unsentOrders.remove(at: index)
                 }
             }
-//            guard
-//                let orderId = indexPath.section == 0 ? self?.unsentOrders[indexPath.row].uid : self?.sentOrders[indexPath.row].uid,
-//                let orderToUpdate = context.fetch(CD_Order.self, id: orderId) else { return }
-//
-//            orderToUpdate.sent = true
-//            if indexPath.section == 0 {
-//                self?.sentOrders.append(orderToUpdate)
-//                if let index = self?.unsentOrders.firstIndex(where: {$0.uid == orderToUpdate.uid}) {
-//                    self?.unsentOrders.remove(at: index)
-//                }
-//            } else {
-//                self?.unsentOrders.append(orderToUpdate)
-//                if let index = self?.sentOrders.firstIndex(where: {$0.uid == orderToUpdate.uid}) {
-//                    self?.sentOrders.remove(at: index)
-//                }
-//            }
             context.saveContext()
             completion()
         }

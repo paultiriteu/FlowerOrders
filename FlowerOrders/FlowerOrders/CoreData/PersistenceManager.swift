@@ -24,18 +24,6 @@ final class PersistenceManager {
     
     lazy var context = persistentContainer.viewContext
     
-//    func fetch<T: NSManagedObject>(_ objectType: T.Type) -> [T] {
-//        let entityName = String(describing: objectType)
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-//        
-//        do {
-//            let fetchedObjects = try context.fetch(fetchRequest) as? [T]
-//            return fetchedObjects ?? []
-//        } catch {
-//            return []
-//        }
-//    }
-    
     func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
         persistentContainer.performBackgroundTask(block)
     }

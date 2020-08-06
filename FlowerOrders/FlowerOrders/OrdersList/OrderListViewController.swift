@@ -90,7 +90,6 @@ extension OrderListViewController {
                     self?.tableView.reloadData()                    
                 }
             })
-            print(self?.viewModel.orders[indexPath.row])
         })
         action.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
         return action
