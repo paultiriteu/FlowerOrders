@@ -15,21 +15,18 @@ class OrderListRepository {
         self.networking = networking
     }
     
-    func getOrders(completion: @escaping () -> Void) {
-        var didSaveContext = false
+    func getOrders(onError: @escaping () -> Void) {
         networking.request(onSuccess: { (response: [Order]) in
-            response.forEach { (order) in
-                if PersistenceManager.shared.itemExists(id: order.uid, type: CD_Order.self) == false {
-                    order.mapToCoreData()
-                    PersistenceManager.shared.saveContext()
-                    didSaveContext = true
-                }
+            PersistenceManager.shared.performBackgroundTask { (context) in
+                context.deleteAll(CD_Order.self, completion: {
+                    response.forEach { (order) in
+                        order.mapToCoreData(context: context)
+                    }
+                context.saveContext()
+                })
             }
-            if !didSaveContext {
-                completion()
-            }
-        }, onError: { errorMessage in
-            
+        }, onError: { _ in
+            onError()
         })
     }
 }

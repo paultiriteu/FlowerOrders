@@ -17,9 +17,9 @@ extension CD_Order {
         return NSFetchRequest<CD_Order>(entityName: "CD_Order")
     }
 
-    @NSManaged public var uid: Int64
+    @NSManaged public var uid: Double
     @NSManaged public var orderDescription: String
-    @NSManaged public var price: Int64
+    @NSManaged public var price: Double
     @NSManaged public var recipient: String
     @NSManaged public var sent: NSNumber
 

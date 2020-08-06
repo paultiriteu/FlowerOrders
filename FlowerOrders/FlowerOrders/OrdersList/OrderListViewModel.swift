@@ -17,11 +17,27 @@ class OrderListViewModel {
         self.repository = repository
     }
     
-    func getOrders(completion: @escaping () -> Void) {
-        repository.getOrders(completion: completion)
+    func getOrders(onError: @escaping () -> Void) {
+        repository.getOrders(onError: {
+            onError()
+        })
     }
     
     func loadOrders() {
-        orders = PersistenceManager.shared.fetch(CD_Order.self)
+        PersistenceManager.shared.context.perform {
+            self.orders = PersistenceManager.shared.context.fetch(CD_Order.self)?.sorted(by: { $1.uid > $0.uid }) ?? []
+        }
+    }
+    
+    func deliverOrder(at indexPath: IndexPath, completion: @escaping () -> Void) {
+        PersistenceManager.shared.performBackgroundTask { [weak self] (context) in
+            guard
+                let orderId = self?.orders[indexPath.row].uid,
+                let orderToUpdate = context.fetch(CD_Order.self, id: orderId) else { return }
+            
+            orderToUpdate.sent = true
+            self?.orders[indexPath.row] = orderToUpdate
+            context.saveContext()
+        }
     }
 }

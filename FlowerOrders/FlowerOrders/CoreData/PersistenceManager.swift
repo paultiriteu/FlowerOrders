@@ -9,6 +9,7 @@
 import CoreData
 
 final class PersistenceManager {
+    public typealias ManagedObjectContextWithObject<O: NSManagedObject> = (NSManagedObjectContext, O?) -> Void
     static let shared = PersistenceManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
@@ -22,11 +23,30 @@ final class PersistenceManager {
     }()
     
     lazy var context = persistentContainer.viewContext
+    
+//    func fetch<T: NSManagedObject>(_ objectType: T.Type) -> [T] {
+//        let entityName = String(describing: objectType)
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+//        
+//        do {
+//            let fetchedObjects = try context.fetch(fetchRequest) as? [T]
+//            return fetchedObjects ?? []
+//        } catch {
+//            return []
+//        }
+//    }
+    
+    func performBackgroundTask(_ block: @escaping (NSManagedObjectContext) -> Void) {
+        persistentContainer.performBackgroundTask(block)
+    }
+}
 
+
+public extension NSManagedObjectContext {
     func saveContext () {
-        if context.hasChanges {
+        if hasChanges {
             do {
-                try context.save()
+                try save()
             } catch {
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
@@ -34,30 +54,29 @@ final class PersistenceManager {
         }
     }
     
-    func fetch<T: NSManagedObject>(_ objectType: T.Type) -> [T] {
-        let entityName = String(describing: objectType)
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        
-        do {
-            let fetchedObjects = try context.fetch(fetchRequest) as? [T]
-            return fetchedObjects ?? []
-        } catch {
-            return []
-        }
+    func fetch<T: NSManagedObject>(_ type: T.Type, id: Double) -> T? {
+        let intId = Int(exactly: id) ?? 0
+        return fetch(type, predicate: NSPredicate(format: "uid == %d", intId))?.first
     }
-
+    
+    func fetch<T: NSManagedObject>(_ type: T.Type, predicate: NSPredicate? = nil) -> [T]? {
+        let entityName = String(describing: T.self)
+        let fetchRequest = NSFetchRequest<T>(entityName: entityName)
+        
+        fetchRequest.predicate = predicate
+        
+        return try? fetch(fetchRequest)
+    }
+    
     func itemExists<T: NSManagedObject>(id: Double, type: T.Type) -> Bool {
-        let entityName = String(describing: type)
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
-        fetchRequest.fetchLimit =  1
-        guard let intId = Int(exactly: id) else { return false }
-        fetchRequest.predicate = NSPredicate(format: "uid == %d", intId)
-
-        do {
-            let count = try context.count(for: fetchRequest)
-            return count > 0
-        } catch {
-            return false
+        return fetch(type, id: id) != nil
+    }
+    
+    func deleteAll<T: NSManagedObject>(_ type: T.Type, completion: @escaping () -> Void) {
+        guard let entities = fetch(type) else { return }
+        for entity in entities {
+            delete(entity)
         }
+        completion()
     }
 }

@@ -15,12 +15,14 @@ struct Order: Codable {
     var recipient: String
     var sent: Bool
     
-    func mapToCoreData() {
-        let persistentOrder = CD_Order(context: PersistenceManager.shared.context)
-        persistentOrder.uid = Int64(exactly: uid) ?? 0
-        persistentOrder.orderDescription = description
-        persistentOrder.price = Int64(exactly: price) ?? 0
-        persistentOrder.recipient = recipient
-        persistentOrder.sent = NSNumber(value: sent)
+    func mapToCoreData(context: NSManagedObjectContext) {
+            if !context.itemExists(id: self.uid, type: CD_Order.self) {
+                let persistentOrder = CD_Order(context: context)
+                persistentOrder.uid = self.uid
+                persistentOrder.orderDescription = self.description
+                persistentOrder.price = self.price
+                persistentOrder.recipient = self.recipient
+                persistentOrder.sent = NSNumber(value: self.sent)
+            }
     }
 }
