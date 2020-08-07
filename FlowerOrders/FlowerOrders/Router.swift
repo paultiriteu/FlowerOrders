@@ -23,9 +23,13 @@ class Router {
         return navigationController
     }
     
-    func toOrderDetailsViewController(order: CD_Order) {
-        let viewModel = OrderDetailsViewModel(order: order)
+    func toOrderDetailsViewController(order: Order, delegate: OrderDetailsViewModelDelegate?) {
+        let viewModel = OrderDetailsViewModel(order: order, delegate: delegate, router: self)
         let viewController = OrderDetailsViewController(viewModel: viewModel)
         navController?.pushViewController(viewController, animated: true)
+    }
+    
+    func popViewController() {
+        navController?.popViewController(animated: true)
     }
 }

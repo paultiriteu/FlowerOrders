@@ -18,12 +18,11 @@ class OrderListRepository {
     func getOrders(onError: @escaping () -> Void) {
         networking.request(onSuccess: { (response: [Order]) in
             PersistenceManager.shared.performBackgroundTask { (context) in
-                context.deleteAll(CD_Order.self, completion: {
-                    response.forEach { (order) in
-                        order.mapToCoreData(context: context)
-                    }
+                context.deleteAll(CD_Order.self)
+                response.forEach { (order) in
+                    order.mapToCoreData(context: context)
+                }
                 context.saveContext()
-                })
             }
         }, onError: { _ in
             onError()

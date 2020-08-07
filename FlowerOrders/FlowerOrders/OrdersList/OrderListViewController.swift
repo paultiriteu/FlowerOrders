@@ -8,6 +8,8 @@
 
 import UIKit
 
+
+
 class OrderListViewController: UITableViewController {
     private let viewModel: OrderListViewModel
     
@@ -22,22 +24,25 @@ class OrderListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.delegate = self
         tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
         tableView.separatorStyle = .none
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
         refreshControl?.tintColor = .black
         
-        displayLocalOrders()
         NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
         viewModel.getOrders(onError: {
             print("error retreiving data")
         })
+        displayLocalOrders()
     }
     
     @objc func refreshTableView() {
         viewModel.getOrders(onError: { [weak self] in
-            self?.refreshControl?.endRefreshing()
+            DispatchQueue.main.async {
+                self?.refreshControl?.endRefreshing()                
+            }
         })
     }
     
@@ -81,11 +86,14 @@ extension OrderListViewController {
         ])
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return section == 0 ? "Orders" : "Sent orders"
+    }
+    
     //MARK: - Contextual Actions
     private func makeTrailingContextualAction(forRowAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Deliver", handler: { [weak self] action, swipeButton, completion in
             self?.viewModel.deliverOrder(at: indexPath, completion: {
-                completion(true)
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()                    
                 }
@@ -93,5 +101,14 @@ extension OrderListViewController {
         })
         action.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
         return action
+    }
+}
+
+
+extension OrderListViewController: OrderListViewModelDelegate {
+    func orderListViewModel(_ orderListViewModel: OrderListViewModel, shouldUpdateView: Bool) {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }

@@ -17,6 +17,10 @@ class OrderDetailsViewController: UIViewController {
     
     private let viewModel: OrderDetailsViewModel
     
+    @IBAction func deliverButtonAction(_ sender: Any) {
+        viewModel.deliverOrder()
+    }
+    
     init(viewModel: OrderDetailsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: OrderDetailsViewController.className, bundle: Bundle(for: OrderDetailsViewController.self))
@@ -50,7 +54,7 @@ class OrderDetailsViewController: UIViewController {
         }
         
         nameLabel.text = "Recipient's name is \(order.recipient)"
-        descriptionLabel.text = order.orderDescription
+        descriptionLabel.text = order.description
         priceLabel.text = "$\(order.price)"
     }
 }

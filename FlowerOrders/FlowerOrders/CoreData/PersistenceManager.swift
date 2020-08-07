@@ -43,14 +43,13 @@ public extension NSManagedObjectContext {
     }
     
     func fetch<T: NSManagedObject>(_ type: T.Type, id: Double) -> T? {
-        let intId = Int(exactly: id) ?? 0
+        guard let intId = Int(exactly: id) else { return nil }
         return fetch(type, predicate: NSPredicate(format: "uid == %d", intId))?.first
     }
     
     func fetch<T: NSManagedObject>(_ type: T.Type, predicate: NSPredicate? = nil) -> [T]? {
         let entityName = String(describing: T.self)
         let fetchRequest = NSFetchRequest<T>(entityName: entityName)
-        
         fetchRequest.predicate = predicate
         
         return try? fetch(fetchRequest)
@@ -60,11 +59,10 @@ public extension NSManagedObjectContext {
         return fetch(type, id: id) != nil
     }
     
-    func deleteAll<T: NSManagedObject>(_ type: T.Type, completion: @escaping () -> Void) {
+    func deleteAll<T: NSManagedObject>(_ type: T.Type) {
         guard let entities = fetch(type) else { return }
         for entity in entities {
             delete(entity)
         }
-        completion()
     }
 }

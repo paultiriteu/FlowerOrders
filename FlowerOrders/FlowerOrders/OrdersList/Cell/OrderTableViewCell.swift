@@ -15,7 +15,7 @@ class OrderTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        selectionStyle = .none
+//        selectionStyle = .none
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -23,9 +23,9 @@ class OrderTableViewCell: UITableViewCell {
     }
     
     
-    func configure(order: CD_Order) {
+    func configure(order: Order) {
         nameLabel.text = order.recipient
-        descriptionLabel.text = order.orderDescription
+        descriptionLabel.text = order.description
         
         sentLabel.isHidden = order.sent == false
     }
