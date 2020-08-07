@@ -14,6 +14,7 @@ class OrderDetailsViewController: UIViewController {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var priceLabel: UILabel!
+    @IBOutlet weak var orderImageView: UIImageView!
     
     private let viewModel: OrderDetailsViewModel
     
@@ -56,5 +57,12 @@ class OrderDetailsViewController: UIViewController {
         nameLabel.text = "Recipient's name is \(order.recipient)"
         descriptionLabel.text = order.description
         priceLabel.text = "$\(order.price)"
+        
+        deliverButton.layer.cornerRadius = deliverButton.bounds.height / 2
+        deliverButton.layer.applyShadow()
+        
+        orderImageView.contentMode = .scaleAspectFit
+        guard let photoUrl = URL(string: order.photoUrl) else { return }
+        orderImageView.af.setImage(withURL: photoUrl)
     }
 }

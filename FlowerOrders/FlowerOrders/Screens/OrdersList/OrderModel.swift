@@ -13,6 +13,7 @@ struct Order: Codable {
     var description: String
     var price: Double
     var recipient: String
+    var photoUrl: String
     var sent: Bool
     
     init(order: CD_Order) {
@@ -20,7 +21,13 @@ struct Order: Codable {
         self.description = order.orderDescription
         self.price = order.price
         self.recipient = order.recipient
+        self.photoUrl = order.photoUrl
         self.sent = order.sent.boolValue
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case uid, description, price, recipient, sent
+        case photoUrl = "photo_url"
     }
     
     func mapToCoreData(context: NSManagedObjectContext) {
@@ -30,9 +37,11 @@ struct Order: Codable {
                 persistentOrder.orderDescription = self.description
                 persistentOrder.price = self.price
                 persistentOrder.recipient = self.recipient
+                persistentOrder.photoUrl = self.photoUrl
                 persistentOrder.sent = NSNumber(value: self.sent)
             }
     }
+    
 }
 
 extension Order: Equatable {
@@ -42,6 +51,7 @@ extension Order: Equatable {
             lhs.description == rhs.description &&
             lhs.price == rhs.price &&
             lhs.recipient == rhs.recipient &&
+            lhs.photoUrl == rhs.photoUrl &&
             lhs.sent == rhs.sent
     }
 }

@@ -24,18 +24,24 @@ class OrderListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.delegate = self
-        tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
-        tableView.separatorStyle = .none
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
-        refreshControl?.tintColor = .black
+        title = "Your orders list"
+        navigationController?.navigationBar.standardAppearance.backgroundColor = .white
+        configureTableView()
         
         NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
         viewModel.getOrders(onError: {
             print("error retreiving data")
         })
         displayLocalOrders()
+    }
+    
+    private func configureTableView() {
+        viewModel.delegate = self
+        tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
+        tableView.separatorStyle = .none
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl?.tintColor = .black
     }
     
     @objc func refreshTableView() {
@@ -86,8 +92,23 @@ extension OrderListViewController {
         ])
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return section == 0 ? "Orders" : "Sent orders"
+//    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return section == 0 ? "Orders" : "Sent orders"
+//    }
+    
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let height: CGFloat = 30
+        let width = UIScreen.main.bounds.width
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: height))
+        headerView.backgroundColor = .white
+        
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: height))
+        label.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
+        label.textColor = .black
+        label.text = section == 0 ? "Orders" : "Sent orders"
+        headerView.addSubview(label)
+        
+        return headerView
     }
     
     //MARK: - Contextual Actions

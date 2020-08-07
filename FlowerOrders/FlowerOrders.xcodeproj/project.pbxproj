@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -30,6 +30,7 @@
 		3C938F4224DC24030004CFB0 /* OrderDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C938F4024DC24030004CFB0 /* OrderDetailsViewController.xib */; };
 		3C938F4424DC27AB0004CFB0 /* UIViewController+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C938F4324DC27AA0004CFB0 /* UIViewController+extension.swift */; };
 		3C938F4624DC28D50004CFB0 /* OrderDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C938F4524DC28D50004CFB0 /* OrderDetailsViewModel.swift */; };
+		3CCAA5BF24DDFF9A0004B294 /* CALayer+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CCAA5BE24DDFF9A0004B294 /* CALayer+extension.swift */; };
 		72F85991E35CBED7196B47A4 /* Pods_FlowerOrders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77B4145D2872A0A7422A26A8 /* Pods_FlowerOrders.framework */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +64,8 @@
 		3C938F4024DC24030004CFB0 /* OrderDetailsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OrderDetailsViewController.xib; sourceTree = "<group>"; };
 		3C938F4324DC27AA0004CFB0 /* UIViewController+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+extension.swift"; sourceTree = "<group>"; };
 		3C938F4524DC28D50004CFB0 /* OrderDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderDetailsViewModel.swift; sourceTree = "<group>"; };
+		3CCAA5BE24DDFF9A0004B294 /* CALayer+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+extension.swift"; sourceTree = "<group>"; };
+		3CCAA5C024DE06110004B294 /* FlowerOrders 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "FlowerOrders 5.xcdatamodel"; sourceTree = "<group>"; };
 		435C5AEC785E8B03B9D81622 /* Pods-FlowerOrders.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FlowerOrders.debug.xcconfig"; path = "Target Support Files/Pods-FlowerOrders/Pods-FlowerOrders.debug.xcconfig"; sourceTree = "<group>"; };
 		77B4145D2872A0A7422A26A8 /* Pods_FlowerOrders.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FlowerOrders.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -108,12 +111,11 @@
 		3C70529224DAFB20002F79DC /* FlowerOrders */ = {
 			isa = PBXGroup;
 			children = (
-				3C938F3E24DC23E00004CFB0 /* OrderDetails */,
-				3C7052CF24DB3375002F79DC /* Extensions */,
-				3C7052C224DB1FCF002F79DC /* CoreData */,
 				3C7052BA24DB0AC0002F79DC /* Networking.swift */,
 				3C7052AF24DAFF2B002F79DC /* Router.swift */,
-				3C7052AA24DAFBEA002F79DC /* OrdersList */,
+				3C7052CF24DB3375002F79DC /* Extensions */,
+				3C7052C224DB1FCF002F79DC /* CoreData */,
+				3C938F4724DDF7770004CFB0 /* Screens */,
 				3C70529324DAFB20002F79DC /* AppDelegate.swift */,
 				3C70529524DAFB20002F79DC /* SceneDelegate.swift */,
 				3C70529724DAFB20002F79DC /* ViewController.swift */,
@@ -170,6 +172,7 @@
 			children = (
 				3C7052D024DB3387002F79DC /* UITableViewCell+extension.swift */,
 				3C938F4324DC27AA0004CFB0 /* UIViewController+extension.swift */,
+				3CCAA5BE24DDFF9A0004B294 /* CALayer+extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -182,6 +185,15 @@
 				3C938F4524DC28D50004CFB0 /* OrderDetailsViewModel.swift */,
 			);
 			path = OrderDetails;
+			sourceTree = "<group>";
+		};
+		3C938F4724DDF7770004CFB0 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				3C7052AA24DAFBEA002F79DC /* OrdersList */,
+				3C938F3E24DC23E00004CFB0 /* OrderDetails */,
+			);
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		FC63F3F48A4B73385C87832E /* Pods */ = {
@@ -204,6 +216,7 @@
 				3C70528C24DAFB20002F79DC /* Sources */,
 				3C70528D24DAFB20002F79DC /* Frameworks */,
 				3C70528E24DAFB20002F79DC /* Resources */,
+				4937228D478E4EA3F1A0D5ED /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -285,6 +298,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		4937228D478E4EA3F1A0D5ED /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlowerOrders/Pods-FlowerOrders-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FlowerOrders/Pods-FlowerOrders-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FlowerOrders/Pods-FlowerOrders-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -296,6 +326,7 @@
 				3C7052C924DB20DA002F79DC /* PersistenceManager.swift in Sources */,
 				3C7052BB24DB0AC0002F79DC /* Networking.swift in Sources */,
 				3C7052B224DAFFD0002F79DC /* OrderListRepository.swift in Sources */,
+				3CCAA5BF24DDFF9A0004B294 /* CALayer+extension.swift in Sources */,
 				3C70529824DAFB20002F79DC /* ViewController.swift in Sources */,
 				3C7052D124DB3387002F79DC /* UITableViewCell+extension.swift in Sources */,
 				3C70529424DAFB20002F79DC /* AppDelegate.swift in Sources */,
@@ -516,12 +547,13 @@
 		3C70529C24DAFB20002F79DC /* FlowerOrders.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3CCAA5C024DE06110004B294 /* FlowerOrders 5.xcdatamodel */,
 				3C7052D924DB5F02002F79DC /* FlowerOrders 4.xcdatamodel */,
 				3C7052D224DB3CA7002F79DC /* FlowerOrders 3.xcdatamodel */,
 				3C7052CA24DB2C21002F79DC /* FlowerOrders 2.xcdatamodel */,
 				3C70529D24DAFB20002F79DC /* FlowerOrders.xcdatamodel */,
 			);
-			currentVersion = 3C7052D924DB5F02002F79DC /* FlowerOrders 4.xcdatamodel */;
+			currentVersion = 3CCAA5C024DE06110004B294 /* FlowerOrders 5.xcdatamodel */;
 			path = FlowerOrders.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

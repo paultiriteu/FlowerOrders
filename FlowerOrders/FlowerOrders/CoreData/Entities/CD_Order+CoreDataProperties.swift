@@ -21,6 +21,7 @@ extension CD_Order {
     @NSManaged public var orderDescription: String
     @NSManaged public var price: Double
     @NSManaged public var recipient: String
+    @NSManaged public var photoUrl: String
     @NSManaged public var sent: NSNumber
 
 }
