@@ -19,17 +19,31 @@ class OrderListViewModel {
     weak var delegate: OrderListViewModelDelegate?
     
     var orders = [Order]()
-    var unsentOrders = [Order]()
-    var sentOrders = [Order]()
+    var unsentOrders = [Order]() {
+        didSet {
+            delegate?.orderListViewModel(self, shouldUpdateView: true)
+        }
+    }
+    var sentOrders = [Order]() {
+        didSet {
+            delegate?.orderListViewModel(self, shouldUpdateView: true)
+        }
+    }
     
     init(repository: OrderListRepository, router: Router) {
         self.repository = repository
         self.router = router
     }
     
-    func getOrders(onError: @escaping () -> Void) {
-        repository.getOrders(onError: {
-            onError()
+    func getOrders(onError: (() -> Void)? = { }) {
+        repository.getOrders(onError: { [weak self] errorMessage in
+            DispatchQueue.main.async {
+                self?.router.errorAlert(errorMessage: errorMessage, handler: {
+                    if let closure = onError {
+                        closure()
+                    }
+                })
+            }
         })
     }
     
@@ -51,7 +65,7 @@ class OrderListViewModel {
         }
     }
     
-    func deliverOrder(at indexPath: IndexPath, completion: @escaping () -> Void) {
+    func deliverOrder(at indexPath: IndexPath) {
         PersistenceManager.shared.performBackgroundTask { [weak self] (context) in
             if indexPath.section == 0 {
                 guard var order = self?.unsentOrders[indexPath.row] else { return }
@@ -61,7 +75,6 @@ class OrderListViewModel {
                 self?.moveOrderToSentArray(order: order)
             }
             context.saveContext()
-            completion()
         }
     }
     

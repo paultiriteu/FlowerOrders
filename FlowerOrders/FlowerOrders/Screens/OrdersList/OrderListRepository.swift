@@ -15,7 +15,7 @@ class OrderListRepository {
         self.networking = networking
     }
     
-    func getOrders(onError: @escaping () -> Void) {
+    func getOrders(onError: @escaping (String) -> Void) {
         networking.request(onSuccess: { (response: [Order]) in
             PersistenceManager.shared.performBackgroundTask { (context) in
                 context.deleteAll(CD_Order.self)
@@ -24,8 +24,8 @@ class OrderListRepository {
                 }
                 context.saveContext()
             }
-        }, onError: { _ in
-            onError()
+        }, onError: { errorMessage in
+            onError(errorMessage)
         })
     }
 }

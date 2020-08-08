@@ -29,6 +29,16 @@ class Router {
         navController?.pushViewController(viewController, animated: true)
     }
     
+    func errorAlert(errorMessage: String, handler: @escaping () -> Void) {
+        let alertController = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: .default, handler: { _ in
+            handler()
+        })
+        alertController.addAction(alertAction)
+        
+        navController?.present(alertController, animated: true)
+    }
+    
     func popViewController() {
         navController?.popViewController(animated: true)
     }

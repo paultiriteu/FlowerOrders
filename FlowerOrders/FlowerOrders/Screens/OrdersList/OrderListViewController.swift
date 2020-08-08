@@ -63,9 +63,7 @@ class OrderListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
 
         viewModel.delegate = self
-        viewModel.getOrders(onError: {
-            print("error retreiving data")
-        })
+        viewModel.getOrders()
         displayLocalOrders()
     }
     
@@ -111,7 +109,6 @@ class OrderListViewController: UIViewController {
     @objc private func displayLocalOrders() {
         viewModel.loadOrders {
             DispatchQueue.main.async {
-                self.tableView.reloadData()
                 self.refreshControl.endRefreshing()
             }
         }
@@ -125,16 +122,23 @@ extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: OrderTableViewCell.className, for: indexPath) as? OrderTableViewCell else { return UITableViewCell() }
-        if indexPath.section == 0 && !viewModel.unsentOrders.isEmpty {
-            cell.configure(order: viewModel.unsentOrders[indexPath.row])
-        } else {
+        if indexPath.section == 0  {
+            if !viewModel.unsentOrders.isEmpty {
+                cell.configure(order: viewModel.unsentOrders[indexPath.row])
+            } else if !viewModel.sentOrders.isEmpty {
+                cell.configure(order: viewModel.sentOrders[indexPath.row])
+            }
+        }
+        else if !viewModel.sentOrders.isEmpty {
             cell.configure(order: viewModel.sentOrders[indexPath.row])
         }
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return section == 0 && !viewModel.unsentOrders.isEmpty ? viewModel.unsentOrders.count : viewModel.sentOrders.count
+        
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -173,11 +177,8 @@ extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
     //MARK: - Contextual Actions
     private func makeTrailingContextualAction(forRowAt indexPath: IndexPath) -> UIContextualAction {
         let action = UIContextualAction(style: .normal, title: "Deliver", handler: { [weak self] action, swipeButton, completion in
-            self?.viewModel.deliverOrder(at: indexPath, completion: {
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()                    
-                }
-            })
+            self?.viewModel.deliverOrder(at: indexPath)
+            self?.searchBar.text = nil
         })
         action.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
         return action
@@ -187,7 +188,6 @@ extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
 extension OrderListViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         viewModel.setSearchText(searchText: searchText)
-        tableView.reloadData()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
