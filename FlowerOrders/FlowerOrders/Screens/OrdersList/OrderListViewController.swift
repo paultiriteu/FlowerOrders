@@ -10,8 +10,36 @@ import UIKit
 
 
 
-class OrderListViewController: UITableViewController {
+class OrderListViewController: UIViewController {
     private let viewModel: OrderListViewModel
+    
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.searchBarStyle = .minimal
+        searchBar.placeholder = "Search..."
+        searchBar.sizeToFit()
+        searchBar.backgroundColor = .white
+        searchBar.returnKeyType = .done
+        searchBar.enablesReturnKeyAutomatically = false
+        searchBar.delegate = self
+        
+        return searchBar
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
+        tableView.separatorStyle = .none
+        
+        return tableView
+    }()
+    
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        refreshControl.tintColor = .black
+        return refreshControl
+    }()
     
     init(viewModel: OrderListViewModel) {
         self.viewModel = viewModel
@@ -24,11 +52,17 @@ class OrderListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
         title = "Your orders list"
         navigationController?.navigationBar.standardAppearance.backgroundColor = .white
+        navigationController?.navigationBar.standardAppearance.shadowColor = .clear
+        
+        configureSearchBar()
         configureTableView()
         
         NotificationCenter.default.addObserver(self, selector: #selector(displayLocalOrders), name: Notification.Name.NSManagedObjectContextDidSave, object: nil)
+
+        viewModel.delegate = self
         viewModel.getOrders(onError: {
             print("error retreiving data")
         })
@@ -36,18 +70,40 @@ class OrderListViewController: UITableViewController {
     }
     
     private func configureTableView() {
-        viewModel.delegate = self
-        tableView.register(UINib(nibName: OrderTableViewCell.className, bundle: Bundle(for: OrderTableViewCell.self)), forCellReuseIdentifier: OrderTableViewCell.className)
-        tableView.separatorStyle = .none
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
-        refreshControl?.tintColor = .black
+        view.addSubview(tableView)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.refreshControl = refreshControl
+        
+        tableView.addSubview(refreshControl)
+        
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func configureSearchBar() {
+        view.addSubview(searchBar)
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor),
+            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor),
+            searchBar.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        view.layoutIfNeeded()
     }
     
     @objc func refreshTableView() {
         viewModel.getOrders(onError: { [weak self] in
             DispatchQueue.main.async {
-                self?.refreshControl?.endRefreshing()                
+                self?.refreshControl.endRefreshing()
             }
         })
     }
@@ -56,20 +112,20 @@ class OrderListViewController: UITableViewController {
         viewModel.loadOrders {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
-                self.refreshControl?.endRefreshing()
+                self.refreshControl.endRefreshing()
             }
         }
     }
 }
 
-extension OrderListViewController {
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.toOrderDetailsViewController(indexPath: indexPath)
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: OrderTableViewCell.className, for: indexPath) as? OrderTableViewCell else { return UITableViewCell() }
-        if indexPath.section == 0 {
+        if indexPath.section == 0 && !viewModel.unsentOrders.isEmpty {
             cell.configure(order: viewModel.unsentOrders[indexPath.row])
         } else {
             cell.configure(order: viewModel.sentOrders[indexPath.row])
@@ -77,26 +133,26 @@ extension OrderListViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? viewModel.unsentOrders.count : viewModel.sentOrders.count
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 0 && !viewModel.unsentOrders.isEmpty ? viewModel.unsentOrders.count : viewModel.sentOrders.count
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return viewModel.sentOrders.isEmpty ? 1 : 2
+    func numberOfSections(in tableView: UITableView) -> Int {
+        if viewModel.sentOrders.isEmpty || viewModel.unsentOrders.isEmpty {
+            return 1
+        } else {
+            return 2
+        }
     }
     
-    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard indexPath.section == 0 else { return nil }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard indexPath.section == 0 && !viewModel.unsentOrders.isEmpty else { return nil }
         return UISwipeActionsConfiguration(actions: [
             makeTrailingContextualAction(forRowAt: indexPath)
         ])
     }
     
-//    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return section == 0 ? "Orders" : "Sent orders"
-//    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let height: CGFloat = 30
         let width = UIScreen.main.bounds.width
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: width, height: height))
@@ -105,7 +161,10 @@ extension OrderListViewController {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: height))
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
         label.textColor = .black
-        label.text = section == 0 ? "Orders" : "Sent orders"
+        label.text = section == 0 && !viewModel.unsentOrders.isEmpty ? "Orders" : "Sent orders"
+        if viewModel.sentOrders.isEmpty {
+            label.text = "Orders"
+        }
         headerView.addSubview(label)
         
         return headerView
@@ -125,6 +184,16 @@ extension OrderListViewController {
     }
 }
 
+extension OrderListViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.setSearchText(searchText: searchText)
+        tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
+    }
+}
 
 extension OrderListViewController: OrderListViewModelDelegate {
     func orderListViewModel(_ orderListViewModel: OrderListViewModel, shouldUpdateView: Bool) {
