@@ -108,8 +108,8 @@ class OrderListViewController: UIViewController {
     
     @objc private func displayLocalOrders() {
         viewModel.loadOrders {
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
+            DispatchQueue.main.async { [weak self] in
+                self?.refreshControl.endRefreshing()
             }
         }
     }
@@ -122,17 +122,11 @@ extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: OrderTableViewCell.className, for: indexPath) as? OrderTableViewCell else { return UITableViewCell() }
-        if indexPath.section == 0  {
-            if !viewModel.unsentOrders.isEmpty {
-                cell.configure(order: viewModel.unsentOrders[indexPath.row])
-            } else if !viewModel.sentOrders.isEmpty {
-                cell.configure(order: viewModel.sentOrders[indexPath.row])
-            }
-        }
-        else if !viewModel.sentOrders.isEmpty {
+        if indexPath.section == 0 && !viewModel.unsentOrders.isEmpty {
+            cell.configure(order: viewModel.unsentOrders[indexPath.row])
+        } else if !viewModel.sentOrders.isEmpty {
             cell.configure(order: viewModel.sentOrders[indexPath.row])
         }
-        
         return cell
     }
     
@@ -197,8 +191,12 @@ extension OrderListViewController: UISearchBarDelegate {
 
 extension OrderListViewController: OrderListViewModelDelegate {
     func orderListViewModel(_ orderListViewModel: OrderListViewModel, shouldUpdateView: Bool) {
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
+        DispatchQueue.main.async { [weak self] in
+            self?.tableView.reloadData()
+            
+            if shouldUpdateView {
+                self?.searchBar.text = nil
+            }
         }
     }
 }

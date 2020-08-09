@@ -21,12 +21,12 @@ class OrderListViewModel {
     var orders = [Order]()
     var unsentOrders = [Order]() {
         didSet {
-            delegate?.orderListViewModel(self, shouldUpdateView: true)
+            delegate?.orderListViewModel(self, shouldUpdateView: false)
         }
     }
     var sentOrders = [Order]() {
         didSet {
-            delegate?.orderListViewModel(self, shouldUpdateView: true)
+            delegate?.orderListViewModel(self, shouldUpdateView: false)
         }
     }
     
