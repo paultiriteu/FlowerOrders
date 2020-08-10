@@ -9,7 +9,6 @@
 import CoreData
 
 final class PersistenceManager {
-    public typealias ManagedObjectContextWithObject<O: NSManagedObject> = (NSManagedObjectContext, O?) -> Void
     static let shared = PersistenceManager()
     
     lazy var persistentContainer: NSPersistentContainer = {
