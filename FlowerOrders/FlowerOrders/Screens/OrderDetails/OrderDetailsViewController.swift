@@ -44,7 +44,7 @@ class OrderDetailsViewController: UIViewController {
             title = "Order details"
         }
         
-        if viewModel.order.sent == false {
+        if !order.sent {
             deliverButton.setTitle("Set as delivered", for: .normal)
             deliverButton.backgroundColor = UIColor(red: 0, green: 0.7, blue: 0, alpha: 1)
             deliverButton.isEnabled = true

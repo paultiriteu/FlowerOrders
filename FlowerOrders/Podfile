@@ -6,6 +6,5 @@ target 'FlowerOrders' do
   use_frameworks!
 
   # Pods for FlowerOrders
-  pod 'Alamofire'
   pod 'AlamofireImage'
 end

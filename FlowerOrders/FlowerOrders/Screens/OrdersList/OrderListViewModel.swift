@@ -18,6 +18,14 @@ class OrderListViewModel {
     
     weak var delegate: OrderListViewModelDelegate?
     
+    var numberOfSections: Int {
+        if sentOrders.isEmpty || unsentOrders.isEmpty {
+            return 1
+        } else {
+            return 2
+        }
+    }
+    
     var orders = [Order]()
     var unsentOrders = [Order]() {
         didSet {
@@ -33,6 +41,10 @@ class OrderListViewModel {
     init(repository: OrderListRepository, router: Router) {
         self.repository = repository
         self.router = router
+    }
+    
+    func getNumberOfRows(in section: Int) -> Int {
+        return section == 0 && !unsentOrders.isEmpty ? unsentOrders.count : sentOrders.count
     }
     
     func getOrders(onError: (() -> Void)? = { }) {
@@ -102,6 +114,8 @@ class OrderListViewModel {
         let order = indexPath.section == 0 && !unsentOrders.isEmpty ? unsentOrders[indexPath.row] : sentOrders[indexPath.row]
         router.toOrderDetailsViewController(order: order, delegate: self)
     }
+    
+    
 }
 
 extension OrderListViewModel: OrderDetailsViewModelDelegate {

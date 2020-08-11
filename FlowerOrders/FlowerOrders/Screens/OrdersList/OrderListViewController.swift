@@ -131,16 +131,12 @@ extension OrderListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 && !viewModel.unsentOrders.isEmpty ? viewModel.unsentOrders.count : viewModel.sentOrders.count
+        return viewModel.getNumberOfRows(in: section)
         
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        if viewModel.sentOrders.isEmpty || viewModel.unsentOrders.isEmpty {
-            return 1
-        } else {
-            return 2
-        }
+        return viewModel.numberOfSections
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
